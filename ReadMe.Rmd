@@ -1,0 +1,140 @@
+---
+title: "ReadMe"
+author: "Julio Morales F."
+date: "26-04-2020"
+output: html_document
+---
+
+## Introduction
+
+Getting and cleaning data is one of the first steps in Data analysis. We need to take raw data and convert them into a tidy one in order to manipulate them and get information for analysis. This task requires understanding of how is organized raw data files and use different R functions to merge, combine and filter them to get a tidy data set.
+
+In this example, provided by UCI Machine Learning Repository [Human Activity Recognition Using Smartphones Data Set](http://archive.ics.uci.edu/ml/datasets/Human+Activity+Recognition+Using+Smartphones), they have registered from 30 participants their activities: WALKING, WALKING_UPSTAIRS, WALKING_DOWNSTAIRS, SITTING, STANDING and LAYING, by wearing a smartphone and stored the accelerometer and gyroscope measurements. All the readings taken from training and test evaluation are stored in the following text files and directories (this information and more details can be consulted at README.txt):
+
+Information is stored at "./UCI HAR dataset".
+
+- README.txt
+- features_info.txt: Shows information about the variables used on the feature vector.
+- features.txt: List of all features.
+- activity_labels.txt: Links the class labels with their activity name.
+- train/X_train.txt: Training set.
+- train/y_train.txt: Training labels.
+- test/X_test.txt: Test set.
+- test/y_test.txt: Test labels.
+
+The following files are available for the train and test data. Their descriptions are equivalent.
+
+- train/subject_train.txt: Each row identifies the subject who performed the activity for each window sample. Its range is from 1 to 30.
+
+Also, there is additional data at 'Inertial' directories but their observations is not part of the scope of this cleaning process.
+
+## Requirements.
+
+For further analysis, all these training and test data, with the exception of Inertial information, must be merged into one data set.
+
+In addition, it is required to extract only the measurements on the mean and standard deviation for each measurement. For this reason, Inertial information is not necessary to be included for cleaning process.
+
+Data must be understandable, therefore, it has to use descriptive activity names to name the activities in the data set and appropriately labels the data set with descriptive variable names.
+
+Finally, an independent tidy data set with the average of each variable for each activity and each subject must be created.
+
+## First approach.
+
+In order to get some ideas, how to process these files and get a tidy data set, a first look of all the files is recommended, to observe how is organized, know which delimeter can be used, classes of object and how files are related among them.
+
+For instance, y_train.txt and y_test.txt is in binary information and can be showed as funny and non understandable characters, so the reader application must be capable to visualize this content. Notepad++ is recommended.
+
+Also, in order to have a better picture of the cleaning procedure and the tidy data set required as an output, it is advisable to read [thoughtfulbloke aka David Hood](https://thoughtfulbloke.wordpress.com/2015/09/09/getting-and-cleaning-the-assignment/) with some recomendations, clarifications and examples related to this assignment. 
+
+On the other hand, to have a better understanding about the tidy data set required as a result of this cleaning process, [Tidy Data, from Hadley Wickham](https://vita.had.co.nz/papers/tidy-data.pdf) is useful to have present its definition: "tidy data sets have a specic structure: each variable is a column, each observation is a row, and each type of observational unit is a table" and their examples are illustrative about which tools can be used for cleaning and how to get tidy data sets.
+
+## Files analysis.
+
+A summary of the files structure is the following:
+
+- features.txt: List of all features, a total of 561 names.
+- activity_labels.txt: Links the class labels or ID with their 6 activity names.
+
+- train/X_train.txt: Training set, observations are in scientific notation, total of columns: 561 and rows: 7352.
+- train/y_train.txt: Training labels, Columns: 1 Rows: 7352 min: 1 Max: 6.
+- train/subject_train.txt: Each row identifies the subject who performed the activity for each window sample. Its range is from 1 to 30. Columns: 1 Rows: 7352.
+
+- test/X_test.txt: Test set, observations are in scientific notation, number of columns: 561 Rows: 2947.
+- test/y_test.txt: Test labels, Columns: 1 Rows: 2947 min: 1 Max: 6.
+- test/subject_test.txt: Each row identifies the subject who performed the activity for each window sample. Its range is from 1 to 30. Columns: 1 Rows: 2947.
+
+All these files are separated by spaces.
+
+After looking all files, a strategy about how to clean this data can be infered. First, work with training and test files apart. Naming x_training.txt  with features.txt content. Also, naming subject_train.txt with "Subject" and y_train.txt with "Activity". Then, binding by columns subject_train.txt, y_train.txt and x_train.txt into one data set with 7352 observations and 563 columns.
+
+Same procedure must be applied for test files and a data set with 2947 observations and 563 columns is obtained.
+
+After these step, train and test data set can be binded by rows into one data set. Merged data set has a dimension of 10.299 observations and 563 columns.
+
+## Script Description.
+
+Script is divided into different phases:
+
+0. **Libraries**. Declaration of libraries used in the script: reshape2 and dplyr.
+
+1. **Getting data from source**. Data can be obtained from the following URL in zip format: [dataset.zip]("https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20dataset.zip")
+    
+    1.a **Preparing to extract files**. Data is stored in directory "./Data". If it does not exist, it would be created and all zipped files will be extracted into "./Data" directory.
+ 
+    1.b **Loading files into R tables**. Information is stored at "./Data/UCI HAR dataset" and is distributed into the files or directories as described above. The following tables or dataframes are created:
+    
+    *Activity*. Contains "activity_labels.txt". It is a table with 6 rows and 2 columns. First column is a numeric ID for each human activity tested and second one is its description.
+    
+    *Features*. Contains "features.txt" information. It has 561 rows and 2 columns. Second column contains the header for each Training or Test data set.
+ 
+    *Trainingdataset*. Contains "train/X_train.txt", it is a table with 7352 rows and 561 columns. Each column corresponds to each variable defined at Features.
+    
+    *TrainingLabel*. Contains "train/y_train.txt". It has 7352 rows and 1 column. Their values vary between 1 and 6.
+    
+    *TrainingSubject*. Contains "train/subject_train.txt". It has 7352 rows and 1 column. Their values vary between 1 and 30.
+ 
+    For Test tables are similar with Training ones with the difference that number of observations (rows) are 2947:
+    
+    *Testdataset*. Contains "test/X_test.txt"
+    
+    *TestLabel*. Contains "test/y_test.txt"
+    
+    *TestSubject*. Contains "test/subject_test.txt"
+    
+    All these dataframes and tables have been named as discussed before.
+ 
+2. **Merging Data**. To merge this tables, training variables need to be binded by columns in a new data set called *MergeTraining*. Test variables also are binded by columns and stored in *MergeTest*.
+
+Finally, *MergeTraining* and *MergeTest* can be binded by rows in a *Mergedataset* table. Observe that *Mergedataset* has no descriptive headers and activity is identified by its ID number.
+
+3. **Identifying headers and activities**.*Mergedataset* has its activity ID in column 2 and need to be change for its descriptive name. Combining *Mergedataset*[,2] with *Activity*[,1] by using merge() into a *temp* table, a descriptive activity can be obtained in data set.
+
+**Observation**. Merge() function reorders columns and rows, therefore, sort argument must be set into FALSE if we want to compare inputs with output. Also, we need to reorder columns to have descriptive activity at the begining of the data set.
+
+4. **Filtering mean and standard deviation measurements**. To extract mean and standard deviation, grep() function with a regular expression with "mean(" or "std(" help us to find these patterns from names() of *temp* table. We must be careful with "(" is a reserved character in regular expresion. Therefore, it must be parsed as "\\(" in order to match this pattern. Filtered table is stored into *Filtereddataset*
+
+*Filtereddataset* is a table with 10299 rows and 68 columns.
+ 
+5. **Tidy data set**. To obtain an independent tidy data set with the average of each variable for each activity and each subject, *Filtereddataset* must be rearranged in order to have 63 variables as one measurement by using melt() function. This new table is called *datasetMelt*.
+
+*datasetMelt* is a table with 679.734 rows and 4 columns. These columns are:
+Subject.
+Activity.
+Variable: contains 66 mean() and std() headers.
+Value: readings from each subject, activity and measurement.
+
+To calculate the average of each variable for each activity and each subject, dcast() function can be used on *datasetMelt* by recasting *Activity* and *Subject* in the rows, variable in the columns and taking the mean for each value. *datasetCast* contains in an easy way to visualize the requirement.
+
+However, *datasetCast* is not a tidy data set because it has observations as a headers. Therefore, *datasetCast* must be melted in a similar way as *Filtereddataset* to obtain a tidy data set called *HumanActivityMean*.
+
+*HumanActivityMean* is a table with 11.880 rows and 4 columns. Each row corresponds to one observation of a subject per activity, measurement name (variable) and its mean value.
+
+## References.
+
+**Human Activity Recognition Using Smartphones Data Set**, [http://archive.ics.uci.edu/ml/datasets/Human+Activity+Recognition+Using+Smartphones](http://archive.ics.uci.edu/ml/datasets/Human+Activity+Recognition+Using+Smartphones)
+
+**thoughtfulbloke aka David Hood**, [https://thoughtfulbloke.wordpress.com/2015/09/09/getting-and-cleaning-the-assignment/](https://thoughtfulbloke.wordpress.com/2015/09/09/getting-and-cleaning-the-assignment/)
+
+**Tidy Data**, from Hadley Wickham [https://vita.had.co.nz/papers/tidy-data.pdf](https://vita.had.co.nz/papers/tidy-data.pdf)
+
+
